@@ -14,4 +14,4 @@
 | Post  |   ![Hasil Post Data](./Screenshot/Post-PAW.png) |
 | Update    |   ![Hasil Update Data](./Screenshot/Update-PAW.png) |
 | Delete    |   ![Hasil Hapus Data](./Screenshot/Delete-PAW.png) |
-| Setelah Delete    | ![Hasil Setelah Hapus Data](./Screenshot/DeleteAfter-PAW.png-PAW.png) |
+| Setelah Delete    | ![Hasil Setelah Hapus Data](./Screenshot/DeleteAfter-PAW.png) |
