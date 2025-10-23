@@ -1,4 +1,5 @@
-# Tugas 2
+# Tugas 2 Ada di folder "Tugas/Tugas2.md"
+# Tugas 3 Ada di folder "Tugas3/Tugas3.md"
 
 **Nama:** Gibran Rafi Pratama <br>
 **NIM:** 20230140175 <br>
