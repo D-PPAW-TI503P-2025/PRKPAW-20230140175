@@ -1,40 +1,53 @@
-// 1. Ganti sumber data dari array ke model Sequelize
+"use strict";
+
 const { Presensi } = require("../models");
-const { format } = require("date-fns-tz");
+const { Op } = require("sequelize");
 const timeZone = "Asia/Jakarta";
 
-exports.getDailyReport = async (req, res) => { // 2. Tambahkan async
-  console.log("Controller: Mengambil data laporan harian dari database...");
-
-  // 3. Gunakan try...catch untuk error handling
+exports.getDailyReport = async (req, res) => {
   try {
-    // 4. Ganti cara mengambil data menggunakan 'findAll' dari Sequelize
-    //    Kita urutkan berdasarkan checkIn terbaru (DESC)
-    const allRecords = await Presensi.findAll({
-      order: [["checkIn", "DESC"]],
-    });
+    const { nama, tanggal } = req.query; // Contoh: ?nama=Yasin&tanggal=2025-11-01
+    let options = { where: {} };
 
-    // 5. (Opsional tapi disarankan) Format data agar konsisten
-    const formattedData = allRecords.map((record) => ({
-      userId: record.userId,
-      nama: record.nama,
-      checkIn: record.checkIn
-        ? format(record.checkIn, "yyyy-MM-dd HH:mm:ssXXX", { timeZone })
-        : null,
-      checkOut: record.checkOut
-        ? format(record.checkOut, "yyyy-MM-dd HH:mm:ssXXX", { timeZone })
-        : null,
-    }));
+    // 🔍 Filter berdasarkan nama (opsional)
+    if (nama) {
+      options.where.nama = {
+        [Op.like]: `%${nama}%`,
+      };
+    }
 
+    // 🔍 Filter berdasarkan tanggal (opsional)
+    if (tanggal) {
+      const startOfDay = new Date(`${tanggal}T00:00:00.000Z`);
+      const endOfDay = new Date(`${tanggal}T23:59:59.999Z`);
+      options.where.checkIn = { [Op.between]: [startOfDay, endOfDay] };
+    }
+
+    // Urutkan dari checkIn terbaru
+    options.order = [["checkIn", "DESC"]];
+
+    // Ambil data dari database
+    const records = await Presensi.findAll(options);
+
+    if (records.length === 0) {
+      return res.status(404).json({
+        message: "Tidak ada data presensi ditemukan untuk filter yang diberikan.",
+      });
+    }
+
+    // 🕒 Format tanggal laporan (1/11/2025)
+    const reportDate = new Date().toLocaleDateString("id-ID", { timeZone });
+
+    // Kirim hasil sesuai format yang kamu mau
     res.json({
-      reportDate: format(new Date(), "yyyy-MM-dd", { timeZone }), // Format tanggal laporan
-      data: formattedData, // Kirim data yang sudah diformat
+      reportDate: reportDate,
+      total: records.length,
+      data: records, // biarkan data mentah tanpa format waktu agar seperti contohmu
     });
-    
   } catch (error) {
-    // 6. Tambahkan error handling
-    res
-      .status(500)
-      .json({ message: "Terjadi kesalahan pada server", error: error.message });
+    res.status(500).json({
+      message: "Gagal mengambil laporan presensi.",
+      error: error.message,
+    });
   }
 };
