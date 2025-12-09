@@ -3,12 +3,37 @@ const { body, validationResult } = require("express-validator");
 const { format } = require("date-fns-tz");
 const timeZone = "Asia/Jakarta";
 
+// Pertemuan 10=====
+const multer = require('multer');
+const path = require('path');
+
+const storage = multer.diskStorage({
+  destination: (req, file, cb) => {
+    cb(null, 'uploads/'); 
+  },
+  filename: (req, file, cb) => {
+    // Format nama file: userId-timestamp.jpg
+    cb(null, `${req.user.id}-${Date.now()}${path.extname(file.originalname)}`);
+  }
+});
+
+const fileFilter = (req, file, cb) => {
+  if (file.mimetype.startsWith('image/')) {
+    cb(null, true);
+  } else {
+    cb(new Error('Hanya file gambar yang diperbolehkan!'), false);
+  }
+};
+
+exports.upload = multer({ storage: storage, fileFilter: fileFilter });
+
 // --- 1. Check In ---
 exports.CheckIn = async (req, res) => {
   try {
     const { id: userId, nama: userName } = req.user;
     const waktuSekarang = new Date();
     const { latitude, longitude } = req.body;
+    const buktiFoto = req.file ? req.file.path : null;  //path foto
 
     const existingRecord = await Presensi.findOne({
       where: { userId: userId, checkOut: null },
@@ -23,6 +48,7 @@ exports.CheckIn = async (req, res) => {
       checkIn: waktuSekarang,
       latitude: latitude || null,
       longitude: longitude || null,
+      buktiFoto: buktiFoto 
     });
 
     res.status(201).json({
