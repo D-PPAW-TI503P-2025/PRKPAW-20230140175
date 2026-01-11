@@ -7,5 +7,5 @@
 ---
 | Keterangan | Screenshot |
 | :---         |     :---:      |
-| Tampilan Arduino | ![](./SS/arduino.jpeg)
-| Tampilan Terminal | ![](./SS/tampilanTerminal.png)
+| Tampilan Arduino | ![](./SS/arduino.jpeg) |
+| Tampilan Terminal | ![](./SS/tampilanTerminal.png) |
