@@ -7,4 +7,5 @@
 ---
 | Keterangan | Screenshot |
 | :---         |     :---:      |
-| Tampilan serial monitor arduino. | ![](./SS/image.png) |
+| Tampilan serial monitor arduino. | ![](./SS/image1.png) |
+| Tampilan Terminal | ![](./SS/image.png) |
